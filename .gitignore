@@ -1,0 +1,7 @@
+# These repositories are developed in place rather than rsynced out of the
+# monorepo, so the install artefacts land here. A package ships no lock file —
+# `install.yml` resolves from nothing, the way a consumer first installs it.
+/vendor/
+/composer.lock
+/.phpunit.cache/
+/.phpunit.result.cache

@@ -7,28 +7,13 @@ on:
     branches: [main]
   workflow_dispatch:
 
-permissions:
-  contents: read
+# A publish sweep pushes every package within seconds of the others. Superseding
+# this repository's previous run keeps a re-publish from stacking on a sweep that
+# has not finished.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   tests:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.5'
-          extensions: mbstring, pdo, pdo_sqlite, bcmath, zip, intl
-          coverage: none
-
-      # No committed lock file: a released package must resolve against whatever
-      # its constraints currently allow, which is what a consumer will install.
-      - name: Install dependencies
-        run: composer update --no-interaction --prefer-dist --no-progress
-
-      - name: Run tests
-        run: vendor/bin/pest
+    uses: liberusoftware/.github/.github/workflows/package-tests.yml@main
